@@ -104,7 +104,7 @@ const Calendar: React.FC = () => {
                     size={1.64}
                     key={day.toString() + hour}
                     sx={{
-                      height: 100,
+                      height: 120, // Increased height to accommodate 3 classes
                       border: '1px solid rgba(0,0,0,0.05)',
                       position: 'relative',
                       cursor: 'pointer',
@@ -115,8 +115,8 @@ const Calendar: React.FC = () => {
                     <Box sx={{ 
                       display: 'flex', 
                       flexDirection: 'column', 
-                      gap: 0.5, 
-                      p: 0.5,
+                      gap: 0.25, // Tighter gap
+                      p: 0.25,   // Tighter padding
                       height: '100%',
                       overflow: 'hidden'
                     }}>
@@ -128,18 +128,31 @@ const Calendar: React.FC = () => {
                             onClick={(e) => handleClassClick(e, session)}
                             sx={{
                               bgcolor: trainer?.color || 'primary.main',
-                              borderRadius: 1.5,
-                              p: 0.5,
-                              boxShadow: `0 2px 6px ${trainer?.color}44`,
+                              borderRadius: 1, // Slightly smaller radius
+                              p: '2px 4px',    // Surgical padding
+                              boxShadow: `0 2px 4px ${trainer?.color}33`,
                               color: '#fff',
                               zIndex: 1,
                               flexShrink: 0,
                             }}
                           >
-                            <Typography variant="caption" sx={{ fontWeight: 800, display: 'block', fontSize: '0.7rem', lineHeight: 1.1 }}>
+                            <Typography variant="caption" sx={{ 
+                              fontWeight: 800, 
+                              display: 'block', 
+                              fontSize: '0.68rem', 
+                              lineHeight: 1.1,
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }}>
                               {session.title}
                             </Typography>
-                            <Typography variant="caption" sx={{ opacity: 0.9, fontSize: '0.65rem' }}>
+                            <Typography variant="caption" sx={{ 
+                              opacity: 0.9, 
+                              fontSize: '0.62rem',
+                              display: 'block',
+                              lineHeight: 1
+                            }}>
                               {trainer?.name}
                             </Typography>
                           </Box>
