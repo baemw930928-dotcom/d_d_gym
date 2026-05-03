@@ -19,10 +19,12 @@ interface GymState {
   trainers: Trainer[];
   classes: ClassSession[];
   selectedTrainerId: string | null;
+  themeMode: 'light' | 'dark';
   addClass: (newClass: Omit<ClassSession, 'id'>) => void;
   updateClass: (id: string, updatedClass: Partial<ClassSession>) => void;
   deleteClass: (id: string) => void;
   setSelectedTrainerId: (id: string | null) => void;
+  toggleTheme: () => void;
 }
 
 const DEFAULT_TRAINERS: Trainer[] = [
@@ -37,6 +39,7 @@ export const useStore = create<GymState>()(
       trainers: DEFAULT_TRAINERS,
       classes: [],
       selectedTrainerId: null,
+      themeMode: 'light',
       addClass: (newClass) =>
         set((state) => ({
           classes: [...state.classes, { ...newClass, id: Math.random().toString(36).substr(2, 9) }],
@@ -50,13 +53,13 @@ export const useStore = create<GymState>()(
           classes: state.classes.filter((c) => c.id !== id),
         })),
       setSelectedTrainerId: (id) => set({ selectedTrainerId: id }),
+      toggleTheme: () => set((state) => ({ themeMode: state.themeMode === 'light' ? 'dark' : 'light' })),
     }),
     {
       name: 'ddgym-storage',
-      // Merge logic to ensure trainer names are updated from DEFAULT_TRAINERS
-      merge: (persistedState: any, currentState) => {
-        const merged = { ...currentState, ...persistedState };
-        if (persistedState && persistedState.trainers) {
+      merge: (persistedState, currentState) => {
+        const merged = { ...currentState, ...(persistedState as Partial<GymState>) };
+        if (persistedState && (persistedState as GymState).trainers) {
           merged.trainers = DEFAULT_TRAINERS;
         }
         return merged;
