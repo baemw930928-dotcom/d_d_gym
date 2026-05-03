@@ -21,7 +21,7 @@ const Calendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingClass, setEditingClass] = useState<ClassSession | null>(null);
   const [initialTime, setInitialTime] = useState<Date | undefined>();
-  const [zoom, setZoom] = useState(1); // Zoom level from 0.4 to 1.2
+  const [zoom, setZoom] = useState(window.innerWidth < 600 ? 0.4 : 1); // Full view by default on mobile
 
   const { classes, trainers, selectedTrainerId } = useStore();
 
@@ -82,15 +82,15 @@ const Calendar: React.FC = () => {
           <Slider
             size="small"
             value={zoom}
-            min={0.4}
-            max={1.2}
-            step={0.1}
+            min={0.3}
+            max={1.5}
+            step={0.05}
             onChange={(_, newValue) => setZoom(newValue as number)}
             aria-label="Zoom"
             sx={{ color: 'primary.main', flexGrow: 1 }}
           />
           <ZoomIn size={18} color="gray" />
-          <IconButton onClick={() => setZoom(1)} size="small" title="Reset Zoom">
+          <IconButton onClick={() => setZoom(window.innerWidth < 600 ? 0.4 : 1)} size="small" title="Reset Zoom">
             <Maximize size={18} />
           </IconButton>
         </Box>
@@ -109,7 +109,7 @@ const Calendar: React.FC = () => {
           transformOrigin: 'top left',
           width: `${100 / zoom}%`,
           transition: 'transform 0.2s ease-out, width 0.2s ease-out',
-          pb: zoom < 1 ? 0 : 4 // Add some padding when zoomed in
+          pb: zoom < 1 ? 0 : 4 
         }}>
           <Grid container spacing={0}>
             {/* Time Column Header */}
@@ -153,7 +153,7 @@ const Calendar: React.FC = () => {
                     size={1.64}
                     key={day.toString() + hour}
                     sx={{
-                      height: 120, // Increased height to accommodate 3 classes
+                      height: 120, 
                       border: '1px solid rgba(0,0,0,0.05)',
                       position: 'relative',
                       cursor: 'pointer',
@@ -164,8 +164,8 @@ const Calendar: React.FC = () => {
                     <Box sx={{ 
                       display: 'flex', 
                       flexDirection: 'column', 
-                      gap: 0.25, // Tighter gap
-                      p: 0.25,   // Tighter padding
+                      gap: 0.25, 
+                      p: 0.25,   
                       height: '100%',
                       overflow: 'hidden'
                     }}>
@@ -177,8 +177,8 @@ const Calendar: React.FC = () => {
                             onClick={(e) => handleClassClick(e, session)}
                             sx={{
                               bgcolor: trainer?.color || 'primary.main',
-                              borderRadius: 1, // Slightly smaller radius
-                              p: '2px 4px',    // Surgical padding
+                              borderRadius: 1, 
+                              p: '2px 4px',    
                               boxShadow: `0 2px 4px ${trainer?.color}33`,
                               color: '#fff',
                               zIndex: 1,
