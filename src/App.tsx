@@ -66,6 +66,12 @@ function App() {
 
         <TrainerFilter />
         <Calendar />
+
+        <Box sx={{ mt: 6, pb: 2, textAlign: 'center' }}>
+          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, letterSpacing: '0.05em' }}>
+            © 2024 d_d_gym | Created by 배명원 대표
+          </Typography>
+        </Box>
       </Container>
     </ThemeProvider>
   );
