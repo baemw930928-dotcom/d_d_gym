@@ -26,9 +26,9 @@ interface GymState {
 }
 
 const DEFAULT_TRAINERS: Trainer[] = [
-  { id: '1', name: '김코치', color: '#ff4081' },
-  { id: '2', name: '이코치', color: '#7c4dff' },
-  { id: '3', name: '박코치', color: '#00e5ff' },
+  { id: '1', name: '배코치', color: '#ff6d00' },
+  { id: '2', name: '이코치', color: '#ffab40' },
+  { id: '3', name: '조코치', color: '#ffc107' },
 ];
 
 export const useStore = create<GymState>()(

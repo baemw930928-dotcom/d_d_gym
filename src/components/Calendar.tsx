@@ -14,7 +14,7 @@ import { ko } from 'date-fns/locale';
 import { useStore, type ClassSession } from '../store/useStore';
 import ClassModal from './ClassModal';
 
-const HOURS = Array.from({ length: 15 }, (_, i) => i + 7); // 7:00 to 21:00
+const HOURS = Array.from({ length: 18 }, (_, i) => i + 7); // 7:00 to 00:00 (next day)
 
 const Calendar: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -94,50 +94,58 @@ const Calendar: React.FC = () => {
               </Grid>
               {/* Day Slots */}
               {days.map((day) => {
-                const session = filteredClasses.find((c) => {
+                const hourSessions = filteredClasses.filter((c) => {
                   const classTime = parseISO(c.startTime);
                   return isSameDay(classTime, day) && classTime.getHours() === hour;
                 });
-                const trainer = trainers.find((t) => t.id === session?.trainerId);
 
                 return (
                   <Grid
                     size={1.64}
                     key={day.toString() + hour}
                     sx={{
-                      height: 80,
-                      border: '1px solid rgba(255,255,255,0.05)',
+                      height: 100,
+                      border: '1px solid rgba(0,0,0,0.05)',
                       position: 'relative',
                       cursor: 'pointer',
-                      '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' },
+                      '&:hover': { bgcolor: 'rgba(0,0,0,0.01)' },
                     }}
                     onClick={() => handleSlotClick(day, hour)}
                   >
-                    {session && (
-                      <Box
-                        onClick={(e) => handleClassClick(e, session)}
-                        sx={{
-                          position: 'absolute',
-                          top: 4,
-                          left: 4,
-                          right: 4,
-                          bottom: 4,
-                          bgcolor: trainer?.color || 'primary.main',
-                          borderRadius: 2,
-                          p: 1,
-                          boxShadow: `0 4px 12px ${trainer?.color}44`,
-                          color: '#fff',
-                          zIndex: 1,
-                        }}
-                      >
-                        <Typography variant="caption" sx={{ fontWeight: 800, display: 'block' }}>
-                          {session.title}
-                        </Typography>
-                        <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                          {trainer?.name}
-                        </Typography>
-                      </Box>
-                    )}
+                    <Box sx={{ 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      gap: 0.5, 
+                      p: 0.5,
+                      height: '100%',
+                      overflow: 'hidden'
+                    }}>
+                      {hourSessions.map((session) => {
+                        const trainer = trainers.find((t) => t.id === session.trainerId);
+                        return (
+                          <Box
+                            key={session.id}
+                            onClick={(e) => handleClassClick(e, session)}
+                            sx={{
+                              bgcolor: trainer?.color || 'primary.main',
+                              borderRadius: 1.5,
+                              p: 0.5,
+                              boxShadow: `0 2px 6px ${trainer?.color}44`,
+                              color: '#fff',
+                              zIndex: 1,
+                              flexShrink: 0,
+                            }}
+                          >
+                            <Typography variant="caption" sx={{ fontWeight: 800, display: 'block', fontSize: '0.7rem', lineHeight: 1.1 }}>
+                              {session.title}
+                            </Typography>
+                            <Typography variant="caption" sx={{ opacity: 0.9, fontSize: '0.65rem' }}>
+                              {trainer?.name}
+                            </Typography>
+                          </Box>
+                        );
+                      })}
+                    </Box>
                   </Grid>
                 );
               })}

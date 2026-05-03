@@ -2,16 +2,16 @@ import { createTheme } from '@mui/material/styles';
 
 export const theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
     primary: {
-      main: '#bb86fc', // Vibrant purple
+      main: '#ff6d00', // Vibrant Orange
     },
     secondary: {
-      main: '#03dac6', // Teal accent
+      main: '#ffab40', // Lighter Orange
     },
     background: {
-      default: '#121212',
-      paper: '#1e1e1e',
+      default: '#ffffff',
+      paper: '#f8f9fa',
     },
   },
   typography: {
@@ -19,9 +19,11 @@ export const theme = createTheme({
     h4: {
       fontWeight: 800,
       letterSpacing: '-0.02em',
+      color: '#1a1a1a',
     },
     h6: {
       fontWeight: 600,
+      color: '#1a1a1a',
     },
   },
   shape: {
@@ -33,9 +35,9 @@ export const theme = createTheme({
         root: {
           textTransform: 'none',
           fontWeight: 700,
-          boxShadow: '0 4px 14px 0 rgba(0,0,0,0.39)',
+          boxShadow: '0 4px 14px 0 rgba(255, 109, 0, 0.2)',
           '&:hover': {
-            boxShadow: '0 6px 20px rgba(0,0,0,0.23)',
+            boxShadow: '0 6px 20px rgba(255, 109, 0, 0.3)',
           },
         },
       },
@@ -43,7 +45,8 @@ export const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05))',
+          backgroundImage: 'none',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
         },
       },
     },
