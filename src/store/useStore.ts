@@ -53,6 +53,14 @@ export const useStore = create<GymState>()(
     }),
     {
       name: 'ddgym-storage',
+      // Merge logic to ensure trainer names are updated from DEFAULT_TRAINERS
+      merge: (persistedState: any, currentState) => {
+        const merged = { ...currentState, ...persistedState };
+        if (persistedState && persistedState.trainers) {
+          merged.trainers = DEFAULT_TRAINERS;
+        }
+        return merged;
+      },
     }
   )
 );
