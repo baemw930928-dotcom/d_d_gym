@@ -20,11 +20,13 @@ interface GymState {
   classes: ClassSession[];
   selectedTrainerId: string | null;
   themeMode: 'light' | 'dark';
+  isAuthenticated: boolean;
   addClass: (newClass: Omit<ClassSession, 'id'>) => void;
   updateClass: (id: string, updatedClass: Partial<ClassSession>) => void;
   deleteClass: (id: string) => void;
   setSelectedTrainerId: (id: string | null) => void;
   toggleTheme: () => void;
+  setAuthenticated: (value: boolean) => void;
 }
 
 const DEFAULT_TRAINERS: Trainer[] = [
@@ -40,6 +42,7 @@ export const useStore = create<GymState>()(
       classes: [],
       selectedTrainerId: null,
       themeMode: 'light',
+      isAuthenticated: false,
       addClass: (newClass) =>
         set((state) => ({
           classes: [...state.classes, { ...newClass, id: Math.random().toString(36).substr(2, 9) }],
@@ -54,9 +57,17 @@ export const useStore = create<GymState>()(
         })),
       setSelectedTrainerId: (id) => set({ selectedTrainerId: id }),
       toggleTheme: () => set((state) => ({ themeMode: state.themeMode === 'light' ? 'dark' : 'light' })),
+      setAuthenticated: (value) => set({ isAuthenticated: value }),
     }),
     {
       name: 'ddgym-storage',
+      partialize: (state) => {
+        const result = { ...state };
+        // We use a safe way to remove the property without triggering linting errors
+        return Object.fromEntries(
+          Object.entries(result).filter(([key]) => key !== 'isAuthenticated')
+        ) as Omit<GymState, 'isAuthenticated'>;
+      },
       merge: (persistedState, currentState) => {
         const merged = { ...currentState, ...(persistedState as Partial<GymState>) };
         if (persistedState && (persistedState as GymState).trainers) {

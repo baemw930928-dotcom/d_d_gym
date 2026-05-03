@@ -3,14 +3,21 @@ import { ThemeProvider, CssBaseline, Container, Box, Typography, GlobalStyles, I
 import { createAppTheme } from './styles/theme';
 import Calendar from './components/Calendar';
 import TrainerFilter from './components/TrainerFilter';
-import { Dumbbell, Sun, Moon } from 'lucide-react';
+import Login from './components/Login';
+import { Dumbbell, Sun, Moon, LogOut } from 'lucide-react';
 import { useStore } from './store/useStore';
 
 function App() {
   const themeMode = useStore((state) => state.themeMode);
   const toggleTheme = useStore((state) => state.toggleTheme);
+  const isAuthenticated = useStore((state) => state.isAuthenticated);
+  const setAuthenticated = useStore((state) => state.setAuthenticated);
 
   const theme = useMemo(() => createAppTheme(themeMode), [themeMode]);
+
+  if (!isAuthenticated) {
+    return <Login />;
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -51,17 +58,32 @@ function App() {
             </Box>
           </Box>
           
-          <IconButton 
-            onClick={toggleTheme} 
-            sx={{ 
-              bgcolor: themeMode === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)',
-              '&:hover': {
-                bgcolor: themeMode === 'light' ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)',
-              }
-            }}
-          >
-            {themeMode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-          </IconButton>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <IconButton 
+              onClick={() => setAuthenticated(false)} 
+              title="로그아웃"
+              sx={{ 
+                bgcolor: themeMode === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)',
+                '&:hover': {
+                  bgcolor: 'error.main',
+                  color: 'white',
+                }
+              }}
+            >
+              <LogOut size={20} />
+            </IconButton>
+            <IconButton 
+              onClick={toggleTheme} 
+              sx={{ 
+                bgcolor: themeMode === 'light' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)',
+                '&:hover': {
+                  bgcolor: themeMode === 'light' ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)',
+                }
+              }}
+            >
+              {themeMode === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+            </IconButton>
+          </Box>
         </Box>
 
         <TrainerFilter />
