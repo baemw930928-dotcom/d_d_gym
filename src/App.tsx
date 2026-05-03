@@ -4,7 +4,7 @@ import { createAppTheme } from './styles/theme';
 import Calendar from './components/Calendar';
 import TrainerFilter from './components/TrainerFilter';
 import Login from './components/Login';
-import { Dumbbell, Sun, Moon, LogOut } from 'lucide-react';
+import { Sun, Moon, LogOut } from 'lucide-react';
 import { useStore } from './store/useStore';
 
 function App() {
@@ -33,21 +33,32 @@ function App() {
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box
+          <Box
+            sx={{
+              bgcolor: 'primary.main',
+              width: 56,
+              height: 56,
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: themeMode === 'light' 
+                ? '0 8px 16px rgba(255, 109, 0, 0.4)'
+                : '0 8px 16px rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            <Typography
               sx={{
-                bgcolor: 'primary.main',
-                p: 1.5,
-                borderRadius: 3,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: themeMode === 'light' 
-                  ? '0 8px 16px rgba(255, 109, 0, 0.4)'
-                  : '0 8px 16px rgba(0, 0, 0, 0.5)',
+                color: '#fff',
+                fontSize: '1.5rem',
+                fontWeight: 900,
+                lineHeight: 1,
+                letterSpacing: '-0.05em',
               }}
             >
-              <Dumbbell color="#fff" size={32} />
-            </Box>
+              d_d
+            </Typography>
+          </Box>
             <Box>
               <Typography variant="h4" component="h1">
                 d_d_gym

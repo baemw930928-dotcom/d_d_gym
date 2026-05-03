@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Paper, TextField, Button, Container, ThemeProvider, CssBaseline } from '@mui/material';
-import { Dumbbell, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { createAppTheme } from '../styles/theme';
 
@@ -47,16 +47,29 @@ const Login: React.FC = () => {
             <Box
               sx={{
                 bgcolor: 'primary.main',
-                p: 2,
-                borderRadius: 3,
+                width: 72,
+                height: 72,
+                borderRadius: '50%',
                 display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 mb: 3,
                 boxShadow: themeMode === 'light' 
                   ? '0 8px 16px rgba(255, 109, 0, 0.4)'
                   : '0 8px 16px rgba(0, 0, 0, 0.5)',
               }}
             >
-              <Dumbbell color="#fff" size={40} />
+              <Typography
+                sx={{
+                  color: '#fff',
+                  fontSize: '2rem',
+                  fontWeight: 900,
+                  lineHeight: 1,
+                  letterSpacing: '-0.05em',
+                }}
+              >
+                d_d
+              </Typography>
             </Box>
             <Typography variant="h5" sx={{ fontWeight: 800, mb: 1 }}>
               d_d_gym
