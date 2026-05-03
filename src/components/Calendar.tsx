@@ -11,7 +11,7 @@ import {
   parseISO,
 } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { useStore, ClassSession } from '../store/useStore';
+import { useStore, type ClassSession } from '../store/useStore';
 import ClassModal from './ClassModal';
 
 const HOURS = Array.from({ length: 15 }, (_, i) => i + 7); // 7:00 to 21:00
@@ -64,10 +64,10 @@ const Calendar: React.FC = () => {
         <Box sx={{ minWidth: 800 }}>
           <Grid container spacing={0}>
             {/* Time Column Header */}
-            <Grid item xs={0.5}></Grid>
+            <Grid size={0.5}></Grid>
             {/* Day Headers */}
             {days.map((day) => (
-              <Grid item xs={1.64} key={day.toString()} sx={{ textAlign: 'center', pb: 2 }}>
+              <Grid size={1.64} key={day.toString()} sx={{ textAlign: 'center', pb: 2 }}>
                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
                   {format(day, 'E', { locale: ko })}
                 </Typography>
@@ -87,7 +87,7 @@ const Calendar: React.FC = () => {
           {HOURS.map((hour) => (
             <Grid container spacing={0} key={hour}>
               {/* Hour Label */}
-              <Grid item xs={0.5} sx={{ textAlign: 'right', pr: 1, pt: 1 }}>
+              <Grid size={0.5} sx={{ textAlign: 'right', pr: 1, pt: 1 }}>
                 <Typography variant="caption" color="text.secondary">
                   {hour}:00
                 </Typography>
@@ -102,8 +102,7 @@ const Calendar: React.FC = () => {
 
                 return (
                   <Grid
-                    item
-                    xs={1.64}
+                    size={1.64}
                     key={day.toString() + hour}
                     sx={{
                       height: 80,

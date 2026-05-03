@@ -11,7 +11,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { X } from 'lucide-react';
-import { useStore, ClassSession } from '../store/useStore';
+import { useStore, type ClassSession } from '../store/useStore';
 import { format } from 'date-fns';
 
 interface ClassModalProps {
@@ -122,7 +122,7 @@ const ClassModal: React.FC<ClassModalProps> = ({ open, onClose, editingClass, in
             fullWidth
             value={formData.date}
             onChange={handleChange('date')}
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
           />
           <TextField
             label="시간"
@@ -130,7 +130,7 @@ const ClassModal: React.FC<ClassModalProps> = ({ open, onClose, editingClass, in
             fullWidth
             value={formData.time}
             onChange={handleChange('time')}
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
           />
         </Box>
       </DialogContent>

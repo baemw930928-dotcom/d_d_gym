@@ -1,4 +1,3 @@
-import React from 'react';
 import { ThemeProvider, CssBaseline, Container, Box, Typography, GlobalStyles } from '@mui/material';
 import { theme } from './styles/theme';
 import Calendar from './components/Calendar';
