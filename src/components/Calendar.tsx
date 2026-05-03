@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Typography, Paper, Grid, IconButton } from '@mui/material';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { Box, Typography, Paper, Grid, IconButton, Slider } from '@mui/material';
+import { ChevronLeft, ChevronRight, Plus, ZoomIn, ZoomOut, Maximize } from 'lucide-react';
 import {
   format,
   startOfWeek,
@@ -21,6 +21,7 @@ const Calendar: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingClass, setEditingClass] = useState<ClassSession | null>(null);
   const [initialTime, setInitialTime] = useState<Date | undefined>();
+  const [zoom, setZoom] = useState(1); // Zoom level from 0.4 to 1.2
 
   const { classes, trainers, selectedTrainerId } = useStore();
 
@@ -45,23 +46,71 @@ const Calendar: React.FC = () => {
   };
 
   return (
-    <Paper sx={{ p: 2, borderRadius: 4, overflow: 'hidden' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h6" sx={{ fontWeight: 800 }}>
-          {format(startDate, 'yyyy년 M월', { locale: ko })}
-        </Typography>
-        <Box>
-          <IconButton onClick={() => setCurrentDate(addDays(currentDate, -7))}>
-            <ChevronLeft />
-          </IconButton>
-          <IconButton onClick={() => setCurrentDate(addDays(currentDate, 7))}>
-            <ChevronRight />
+    <Paper sx={{ p: { xs: 1, sm: 2 }, borderRadius: 4, overflow: 'hidden' }}>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: { xs: 'column', sm: 'row' }, 
+        justifyContent: 'space-between', 
+        alignItems: { xs: 'flex-start', sm: 'center' }, 
+        gap: 2,
+        mb: 3 
+      }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="h6" sx={{ fontWeight: 800 }}>
+            {format(startDate, 'yyyy년 M월', { locale: ko })}
+          </Typography>
+          <Box sx={{ ml: 1 }}>
+            <IconButton onClick={() => setCurrentDate(addDays(currentDate, -7))} size="small">
+              <ChevronLeft size={20} />
+            </IconButton>
+            <IconButton onClick={() => setCurrentDate(addDays(currentDate, 7))} size="small">
+              <ChevronRight size={20} />
+            </IconButton>
+          </Box>
+        </Box>
+
+        {/* Zoom Controls */}
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: 'row', 
+          alignItems: 'center', 
+          gap: 2, 
+          width: { xs: '100%', sm: 250 }, 
+          px: { xs: 1, sm: 0 } 
+        }}>
+          <ZoomOut size={18} color="gray" />
+          <Slider
+            size="small"
+            value={zoom}
+            min={0.4}
+            max={1.2}
+            step={0.1}
+            onChange={(_, newValue) => setZoom(newValue as number)}
+            aria-label="Zoom"
+            sx={{ color: 'primary.main', flexGrow: 1 }}
+          />
+          <ZoomIn size={18} color="gray" />
+          <IconButton onClick={() => setZoom(1)} size="small" title="Reset Zoom">
+            <Maximize size={18} />
           </IconButton>
         </Box>
       </Box>
 
-      <Box sx={{ overflowX: 'auto' }}>
-        <Box sx={{ minWidth: 800 }}>
+      <Box sx={{ 
+        overflowX: 'auto', 
+        overflowY: 'hidden',
+        WebkitOverflowScrolling: 'touch',
+        '&::-webkit-scrollbar': { height: 8 },
+        '&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(0,0,0,0.1)', borderRadius: 4 }
+      }}>
+        <Box sx={{ 
+          minWidth: 800,
+          transform: `scale(${zoom})`,
+          transformOrigin: 'top left',
+          width: `${100 / zoom}%`,
+          transition: 'transform 0.2s ease-out, width 0.2s ease-out',
+          pb: zoom < 1 ? 0 : 4 // Add some padding when zoomed in
+        }}>
           <Grid container spacing={0}>
             {/* Time Column Header */}
             <Grid size={0.5}></Grid>
@@ -186,6 +235,7 @@ const Calendar: React.FC = () => {
           bgcolor: 'primary.main',
           color: 'white',
           boxShadow: 4,
+          zIndex: 10,
           '&:hover': { bgcolor: 'primary.dark' },
         }}
         onClick={() => {
