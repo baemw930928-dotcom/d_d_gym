@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { supabase } from '../lib/supabase';
 
 export interface Trainer {
   id: string;
@@ -11,8 +12,8 @@ export interface ClassSession {
   id: string;
   title: string;
   trainerId: string;
-  startTime: string; // ISO string
-  duration: number; // minutes
+  startTime: string;
+  duration: number;
 }
 
 interface GymState {
@@ -21,9 +22,11 @@ interface GymState {
   selectedTrainerId: string | null;
   themeMode: 'light' | 'dark';
   isAuthenticated: boolean;
-  addClass: (newClass: Omit<ClassSession, 'id'>) => void;
-  updateClass: (id: string, updatedClass: Partial<ClassSession>) => void;
-  deleteClass: (id: string) => void;
+  isLoading: boolean;
+  fetchClasses: () => Promise<void>;
+  addClass: (newClass: Omit<ClassSession, 'id'>) => Promise<void>;
+  updateClass: (id: string, updatedClass: Partial<ClassSession>) => Promise<void>;
+  deleteClass: (id: string) => Promise<void>;
   setSelectedTrainerId: (id: string | null) => void;
   toggleTheme: () => void;
   setAuthenticated: (value: boolean) => void;
@@ -43,38 +46,78 @@ export const useStore = create<GymState>()(
       selectedTrainerId: null,
       themeMode: 'light',
       isAuthenticated: false,
-      addClass: (newClass) =>
-        set((state) => ({
-          classes: [...state.classes, { ...newClass, id: Math.random().toString(36).substr(2, 9) }],
-        })),
-      updateClass: (id, updatedClass) =>
-        set((state) => ({
-          classes: state.classes.map((c) => (c.id === id ? { ...c, ...updatedClass } : c)),
-        })),
-      deleteClass: (id) =>
-        set((state) => ({
-          classes: state.classes.filter((c) => c.id !== id),
-        })),
+      isLoading: false,
+
+      fetchClasses: async () => {
+        set({ isLoading: true });
+        const { data, error } = await supabase
+          .from('classes')
+          .select('*')
+          .order('start_time', { ascending: true });
+        if (!error && data) {
+          set({
+            classes: data.map((c) => ({
+              id: c.id,
+              title: c.title,
+              trainerId: c.trainer_id,
+              startTime: c.start_time,
+              duration: c.duration,
+            })),
+          });
+        }
+        set({ isLoading: false });
+      },
+
+      addClass: async (newClass) => {
+        const id = Math.random().toString(36).substr(2, 9);
+        const { error } = await supabase.from('classes').insert({
+          id,
+          title: newClass.title,
+          trainer_id: newClass.trainerId,
+          start_time: newClass.startTime,
+          duration: newClass.duration,
+        });
+        if (!error) {
+          set((state) => ({
+            classes: [...state.classes, { ...newClass, id }],
+          }));
+        }
+      },
+
+      updateClass: async (id, updatedClass) => {
+        const { error } = await supabase.from('classes').update({
+          ...(updatedClass.title && { title: updatedClass.title }),
+          ...(updatedClass.trainerId && { trainer_id: updatedClass.trainerId }),
+          ...(updatedClass.startTime && { start_time: updatedClass.startTime }),
+        }).eq('id', id);
+        if (!error) {
+          set((state) => ({
+            classes: state.classes.map((c) => (c.id === id ? { ...c, ...updatedClass } : c)),
+          }));
+        }
+      },
+
+      deleteClass: async (id) => {
+        const { error } = await supabase.from('classes').delete().eq('id', id);
+        if (!error) {
+          set((state) => ({
+            classes: state.classes.filter((c) => c.id !== id),
+          }));
+        }
+      },
+
       setSelectedTrainerId: (id) => set({ selectedTrainerId: id }),
       toggleTheme: () => set((state) => ({ themeMode: state.themeMode === 'light' ? 'dark' : 'light' })),
       setAuthenticated: (value) => set({ isAuthenticated: value }),
     }),
     {
       name: 'ddgym-storage',
-      partialize: (state) => {
-        const result = { ...state };
-        // We use a safe way to remove the property without triggering linting errors
-        return Object.fromEntries(
-          Object.entries(result).filter(([key]) => key !== 'isAuthenticated')
-        ) as Omit<GymState, 'isAuthenticated'>;
-      },
-      merge: (persistedState, currentState) => {
-        const merged = { ...currentState, ...(persistedState as Partial<GymState>) };
-        if (persistedState && (persistedState as GymState).trainers) {
-          merged.trainers = DEFAULT_TRAINERS;
-        }
-        return merged;
-      },
+      partialize: (state) =>
+        Object.fromEntries(
+          Object.entries(state).filter(([key]) =>
+            ['themeMode', 'selectedTrainerId'].includes(key)
+          )
+        ) as any,
     }
   )
 );
